@@ -81,6 +81,19 @@
             to   { opacity: 1; }
         }
 
+        /* ============================================
+           MOBILE — no blur, photo fills screen normally
+        ============================================ */
+        @media (max-width: 768px) {
+            .slide::before {
+                display: none;
+            }
+            .slide::after {
+                background-size: cover;
+                background-position: top center; /* keeps head/face visible */
+            }
+        }
+
         /* Dark overlay on top of photos */
         .overlay {
             position: fixed;
