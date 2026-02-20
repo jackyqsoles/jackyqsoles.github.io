@@ -14,6 +14,7 @@
         body {
             font-family: 'Arial', sans-serif;
             height: 100vh;
+            height: 100dvh; /* mobile: excludes browser address bar so nothing gets cropped */
             overflow: hidden;
             position: relative;
         }
@@ -43,13 +44,14 @@
 
         /*
            BLURRED BACKDROP LAYER (::before)
-           Desktop only: fills the empty sides with a blurred
+           On desktop: fills the empty sides with a blurred
            zoomed copy of the same photo — no black bars.
+           On mobile: portrait fills the full screen naturally.
         */
         .slide::before {
             content: '';
             position: absolute;
-            inset: -30px;
+            inset: -30px; /* slightly oversized to hide blur edges */
             background-image: var(--img);
             background-size: cover;
             background-position: center;
@@ -57,7 +59,7 @@
             transform: scale(1.05);
         }
 
-        /* SHARP PORTRAIT LAYER — full photo centered on desktop */
+        /* SHARP PORTRAIT LAYER — always shows full photo centered */
         .slide::after {
             content: '';
             position: absolute;
@@ -66,18 +68,6 @@
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-        }
-
-        /* ============================================
-           MOBILE — no blur, photo fills screen normally
-        ============================================ */
-        @media (max-width: 768px) {
-            .slide::before {
-                display: none;
-            }
-            .slide::after {
-                background-size: cover;
-            }
         }
 
         /* Incoming slide fades in on top — old slide stays visible underneath, no grey gap */
@@ -113,6 +103,7 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
+            height: 100dvh; /* mobile: matches body, button stays fully visible */
 
             /* ==========================================
                BUTTON VERTICAL POSITION
@@ -162,10 +153,11 @@
             color: #000000;
             border: none;*/
 
-            /* Option 2: Black 
+             Option 2: Black
             background: rgba(0, 0, 0, 0.8);
             color: #ffffff;
-            border: 2px solid white;*/
+            border: 2px solid white;
+            
 
             /* Option 3: Pink gradient
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -173,11 +165,12 @@
             border: none;
             */
 
-            Option 4: Transparent with white border
+            /* Option 4: Transparent with white border
             background: rgba(255, 255, 255, 0.15);
             color: #ffffff;
             border: 2px solid rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
+            */
         }
 
         .link-button:hover {
