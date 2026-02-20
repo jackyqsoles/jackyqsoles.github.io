@@ -70,15 +70,16 @@
             background-repeat: no-repeat;
         }
 
-        /* Incoming slide fades in on top — old slide stays visible underneath, no grey gap */
-        .slide.active {
-            z-index: 1;
-            animation: fadeIn 2s ease-in-out;
+        /* Slides hidden by default, smooth CSS transition on opacity */
+        .slide {
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
+        /* Active slide fades in smoothly on top */
+        .slide.active {
+            opacity: 1;
+            z-index: 1;
         }
 
         /* ============================================
@@ -166,11 +167,10 @@
             color: #000000;
             border: none;*/
 
-             Option 2: Black
+            /* Option 2: Black 
             background: rgba(0, 0, 0, 0.8);
             color: #ffffff;
-            border: 2px solid white;
-            
+            border: 2px solid white;*/
 
             /* Option 3: Pink gradient
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -178,12 +178,11 @@
             border: none;
             */
 
-            /* Option 4: Transparent with white border
+                Option 4: Transparent with white border
             background: rgba(255, 255, 255, 0.15);
             color: #ffffff;
             border: 2px solid rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
-            */
         }
 
         .link-button:hover {
@@ -229,37 +228,39 @@
     </div>
 
     <script>
-        // Set CSS variable for each slide so both blur and sharp layers use same image
-        document.querySelectorAll('.slide').forEach(slide => {
+        const slides = document.querySelectorAll('.slide');
+
+        // Assign CSS variable to each slide (used by blur + sharp layers)
+        slides.forEach(slide => {
             const img = slide.dataset.img;
             if (img) slide.style.setProperty('--img', `url('${img}')`);
         });
 
-        // Slideshow
-        let slideIndex = -1;
-        const slides = document.querySelectorAll('.slide');
+        // Preload all images before starting — prevents lazy-load delays mid-slideshow
+        const imageFiles = Array.from(slides).map(s => s.dataset.img).filter(Boolean);
+        let loaded = 0;
 
-        function showSlides() {
-            // Remove active from current slide
-            if (slideIndex >= 0) slides[slideIndex].classList.remove('active');
+        function startSlideshow() {
+            let slideIndex = 0;
+            slides[slideIndex].classList.add('active');
 
-            slideIndex++;
-            if (slideIndex >= slides.length) slideIndex = 0;
+            setInterval(() => {
+                slides[slideIndex].classList.remove('active');
+                slideIndex = (slideIndex + 1) % slides.length;
+                slides[slideIndex].classList.add('active');
 
-            const next = slides[slideIndex];
-
-            // Force animation to restart even if this slide was shown before
-            next.style.animation = 'none';
-            next.offsetHeight; // trigger reflow
-            next.style.animation = '';
-
-            next.classList.add('active');
-
-            // Change 5000 to adjust speed (milliseconds): 3000 = 3s, 8000 = 8s
-            setTimeout(showSlides, 5000);
+                // Change 5000 to adjust speed (milliseconds): 3000 = 3s, 8000 = 8s
+            }, 5000);
         }
 
-        showSlides();
+        imageFiles.forEach(src => {
+            const img = new Image();
+            img.onload = img.onerror = () => {
+                loaded++;
+                if (loaded === imageFiles.length) startSlideshow();
+            };
+            img.src = src;
+        });
     </script>
 
 </body>
