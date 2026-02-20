@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jacky Q Soles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ============================================
+           BACKGROUND SLIDESHOW
+        ============================================ */
+        .slideshow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 1;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /*
+           BLURRED BACKDROP LAYER (::before)
+           On desktop: fills the empty sides with a blurred
+           zoomed copy of the same photo — no black bars.
+           On mobile: portrait fills the full screen naturally.
+        */
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: -30px; /* slightly oversized to hide blur edges */
+            background-image: var(--img);
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px);
+            transform: scale(1.05);
+        }
+
+        /* SHARP PORTRAIT LAYER — always shows full photo centered */
+        .slide::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: var(--img);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Incoming slide fades in on top — old slide stays visible underneath, no grey gap */
+        .slide.active {
+            z-index: 1;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* Dark overlay on top of photos */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Change 0.3 to make darker (0.5) or lighter (0.1) */
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
+        }
+
+        /* ============================================
+           MAIN CONTENT WRAPPER
+        ============================================ */
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+
+            /* ==========================================
+               BUTTON VERTICAL POSITION
+               Change this to move the button up or down:
+               - "flex-end"  = bottom of screen
+               - "center"    = middle of screen
+               - "flex-start" = top of screen
+               Or use padding-top below for exact position.
+            ========================================== */
+            justify-content: flex-end;
+
+            /* ==========================================
+               FINE-TUNE BUTTON POSITION
+               Change padding-bottom to move button up/down.
+               e.g. 60px = near bottom, 200px = higher up
+            ========================================== */
+            padding-bottom: 80px;
+
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        /* ============================================
+           FANSLY BUTTON STYLES
+        ============================================ */
+        .link-button {
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px 48px;
+            font-size: 18px;
+            font-family: 'Arial', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            width: 100%;
+            max-width: 380px;
+
+            /* ==========================================
+               BUTTON COLOR OPTIONS — uncomment one:
+
+               Option 1: White (default)
+            ========================================== */
+            /*background: rgba(255, 255, 255, 0.9);
+            color: #000000;
+            border: none;*/
+
+             Option 2: Black
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            border: 2px solid white;
+            
+
+            /* Option 3: Pink gradient
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #ffffff;
+            border: none;
+            */
+
+            /* Option 4: Transparent with white border
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            */
+        }
+
+        .link-button:hover {
+            transform: scale(1.03);
+            opacity: 0.92;
+        }
+
+        .link-button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Slideshow -->
+    <!-- ============================================
+         PHOTO ORDER — change the filenames in data-img
+         to control which photo plays first, second, etc.
+         Top to bottom = the order they play.
+    ============================================ -->
+    <div class="slideshow-container">
+        <div class="slide" data-img="image1.jpg"></div>
+        <div class="slide" data-img="image2.jpg"></div>
+        <div class="slide" data-img="image3.jpg"></div>
+        <div class="slide" data-img="image4.jpg"></div>
+    </div>
+
+    <!-- Dark overlay -->
+    <div class="overlay"></div>
+
+    <!-- Main Content -->
+    <div class="content">
+
+        <!-- ============================================
+             FANSLY BUTTON
+             Change href to your Fansly URL.
+             Change the button text below.
+        ============================================ -->
+        <a href="https://fansly.com/jackyqsoles" class="link-button" target="_blank">
+            Welcome to my World 💖
+        </a>
+
+    </div>
+
+    <script>
+        // Set CSS variable for each slide so both blur and sharp layers use same image
+        document.querySelectorAll('.slide').forEach(slide => {
+            const img = slide.dataset.img;
+            if (img) slide.style.setProperty('--img', `url('${img}')`);
+        });
+
+        // Slideshow
+        let slideIndex = -1;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlides() {
+            // Remove active from current slide
+            if (slideIndex >= 0) slides[slideIndex].classList.remove('active');
+
+            slideIndex++;
+            if (slideIndex >= slides.length) slideIndex = 0;
+
+            const next = slides[slideIndex];
+
+            // Force animation to restart even if this slide was shown before
+            next.style.animation = 'none';
+            next.offsetHeight; // trigger reflow
+            next.style.animation = '';
+
+            next.classList.add('active');
+
+            // Change 5000 to adjust speed (milliseconds): 3000 = 3s, 8000 = 8s
+            setTimeout(showSlides, 5000);
+        }
+
+        showSlides();
+    </script>
+
+</body>
+</html>
