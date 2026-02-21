@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jacky Q Soles</title>
+
+    <!-- Favicon: inline SVG, no extra HTTP request -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
+
+    <!-- Preload all 4 images so browser fetches them immediately, before JS runs -->
+    <link rel="preload" as="image" href="image1.jpg">
+    <link rel="preload" as="image" href="image2.jpg">
+    <link rel="preload" as="image" href="image3.jpg">
+    <link rel="preload" as="image" href="image4.jpg">
+
     <style>
         * {
             margin: 0;
@@ -14,9 +24,8 @@
         body {
             font-family: 'Arial', sans-serif;
             height: 100vh;
-            height: 100dvh; /* mobile: excludes browser address bar so nothing gets cropped */
+            height: 100dvh;
             overflow: hidden;
-            position: relative;
         }
 
         /* ============================================
@@ -24,34 +33,30 @@
         ============================================ */
         .slideshow-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             z-index: -1;
         }
 
         .slide {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 1;
+            inset: 0;
+            opacity: 0;
             z-index: 0;
             overflow: hidden;
+            transition: opacity 1.5s ease-in-out;
+            will-change: opacity; /* hints browser to use GPU for smooth fades */
         }
 
-        /*
-           BLURRED BACKDROP LAYER (::before)
-           On desktop: fills the empty sides with a blurred
-           zoomed copy of the same photo — no black bars.
-           On mobile: portrait fills the full screen naturally.
-        */
+        .slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* Desktop: blurred backdrop fills sides, sharp portrait centered on top */
         .slide::before {
             content: '';
             position: absolute;
-            inset: -30px; /* slightly oversized to hide blur edges */
+            inset: -30px;
             background-image: var(--img);
             background-size: cover;
             background-position: center;
@@ -59,7 +64,6 @@
             transform: scale(1.05);
         }
 
-        /* SHARP PORTRAIT LAYER — always shows full photo centered */
         .slide::after {
             content: '';
             position: absolute;
@@ -70,20 +74,8 @@
             background-repeat: no-repeat;
         }
 
-        /* Slides hidden by default, smooth CSS transition on opacity */
-        .slide {
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-        }
-
-        /* Active slide fades in smoothly on top */
-        .slide.active {
-            opacity: 1;
-            z-index: 1;
-        }
-
         /* ============================================
-           MOBILE — no blur, photo fills screen normally
+           MOBILE — no blur, photo fills screen
         ============================================ */
         @media (max-width: 768px) {
             .slide::before {
@@ -91,20 +83,8 @@
             }
             .slide::after {
                 background-size: cover;
-                background-position: top center; /* keeps head/face visible */
+                background-position: top center;
             }
-        }
-
-        /* Dark overlay on top of photos */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* Change 0.3 to make darker (0.5) or lighter (0.1) */
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 0;
         }
 
         /* ============================================
@@ -117,31 +97,21 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            height: 100dvh; /* mobile: matches body, button stays fully visible */
-
-            /* ==========================================
-               BUTTON VERTICAL POSITION
-               Change this to move the button up or down:
-               - "flex-end"  = bottom of screen
-               - "center"    = middle of screen
-               - "flex-start" = top of screen
-               Or use padding-top below for exact position.
-            ========================================== */
+            height: 100dvh;
             justify-content: flex-end;
 
             /* ==========================================
                FINE-TUNE BUTTON POSITION
                Change padding-bottom to move button up/down.
-               e.g. 60px = near bottom, 200px = higher up
+               60px = near bottom, 200px = higher up
             ========================================== */
             padding-bottom: 80px;
-
             padding-left: 20px;
             padding-right: 20px;
         }
 
         /* ============================================
-           FANSLY BUTTON STYLES
+           FANSLY BUTTON
         ============================================ */
         .link-button {
             display: inline-block;
@@ -157,17 +127,6 @@
             transition: transform 0.2s ease, opacity 0.2s ease;
             width: 100%;
             max-width: 380px;
-
-            /* ==========================================
-               BUTTON COLOR OPTIONS — uncomment one:
-
-               Option 1: White (default)
-            ========================================== */
-            /*background: rgba(255, 255, 255, 0.9);
-            color: #000000;
-            border: none;*/
-
-                Option 4: Transparent with white border
             background: rgba(255, 255, 255, 0.15);
             color: #ffffff;
             border: 2px solid rgba(255, 255, 255, 0.8);
@@ -185,7 +144,6 @@
 </head>
 <body>
 
-    <!-- Background Slideshow -->
     <!-- ============================================
          PHOTO ORDER — change the filenames in data-img
          to control which photo plays first, second, etc.
@@ -198,21 +156,16 @@
         <div class="slide" data-img="image4.jpg"></div>
     </div>
 
-    <!-- Dark overlay -->
-    <div class="overlay"></div>
-
-    <!-- Main Content -->
+    <!-- ============================================
+         FANSLY BUTTON
+         Change href to your Fansly URL.
+         Change the button text below.
+         Change padding-bottom in .content above to move it up/down.
+    ============================================ -->
     <div class="content">
-
-        <!-- ============================================
-             FANSLY BUTTON
-             Change href to your Fansly URL.
-             Change the button text below.
-        ============================================ -->
-        <a href="https://fansly.com/jackyqsoles" class="link-button" target="_blank">
+        <a href="https://fansly.com/jackyqsoles" class="link-button" target="_blank" rel="noopener">
             Welcome to my World 💖
         </a>
-
     </div>
 
     <script>
@@ -224,7 +177,8 @@
             if (img) slide.style.setProperty('--img', `url('${img}')`);
         });
 
-        // Preload all images before starting — prevents lazy-load delays mid-slideshow
+        // Confirm images are loaded (preload tags above do the actual fetching)
+        // then kick off the slideshow
         const imageFiles = Array.from(slides).map(s => s.dataset.img).filter(Boolean);
         let loaded = 0;
 
@@ -237,7 +191,7 @@
                 slideIndex = (slideIndex + 1) % slides.length;
                 slides[slideIndex].classList.add('active');
 
-                // Change 5000 to adjust speed (milliseconds): 3000 = 3s, 8000 = 8s
+                // Change 5000 to adjust speed in milliseconds (3000 = 3s, 8000 = 8s)
             }, 5000);
         }
 
