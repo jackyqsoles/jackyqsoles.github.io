@@ -3,13 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jacky Q Soles</title>
 
-    <!-- Favicon: inline SVG, no extra HTTP request -->
+    <!-- ============================================
+         TITLE: 50-60 characters is ideal for Google
+         Current: "Jacky Q Soles | Exclusive Content & Photos" = 43 chars
+         Adjust the text after the pipe if you want
+    ============================================ -->
+    <title>Jacky Q Soles | Exclusive Content &amp; Photos</title>
+
+    <!-- Favicon: inline SVG emoji, zero extra HTTP requests -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
 
-    <!-- Preload all 4 images so browser fetches them immediately, before JS runs -->
-    <link rel="preload" as="image" href="image1.jpg">
+    <!-- SEO: Core -->
+    <meta name="description" content="Welcome to Jacky Q Soles — exclusive photos and content. Follow me on Fansly for the full experience.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jackyqsoles.com">
+
+    <!-- SEO: Open Graph — controls preview when link is shared on Instagram, Discord, iMessage etc.
+         og:image should be a full URL to your best photo once live. -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jackyqsoles.com">
+    <meta property="og:title" content="Jacky Q Soles | Exclusive Content &amp; Photos">
+    <meta property="og:description" content="Welcome to Jacky Q Soles — exclusive photos and content. Follow me on Fansly for the full experience.">
+    <meta property="og:image" content="https://jackyqsoles.com/image1.jpg">
+
+    <!-- SEO: X / Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Jacky Q Soles | Exclusive Content &amp; Photos">
+    <meta name="twitter:description" content="Welcome to Jacky Q Soles — exclusive photos and content. Follow me on Fansly for the full experience.">
+    <meta name="twitter:image" content="https://jackyqsoles.com/image1.jpg">
+
+    <!-- SEO: Structured Data (JSON-LD)
+         Add your Instagram/TikTok/Twitter URLs to sameAs as you grow. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Jacky Q Soles",
+      "url": "https://jackyqsoles.com",
+      "description": "Exclusive content creator. Follow on Fansly for photos and more.",
+      "sameAs": [
+        "https://fansly.com/jackyqsoles"
+      ]
+    }
+    </script>
+
+    <!-- Preload first image immediately for fast LCP -->
+    <link rel="preload" as="image" href="image1.jpg" fetchpriority="high">
+    <!-- Preload remaining images in background -->
     <link rel="preload" as="image" href="image2.jpg">
     <link rel="preload" as="image" href="image3.jpg">
     <link rel="preload" as="image" href="image4.jpg">
@@ -44,7 +85,7 @@
             z-index: 0;
             overflow: hidden;
             transition: opacity 1.5s ease-in-out;
-            will-change: opacity; /* hints browser to use GPU for smooth fades */
+            will-change: opacity;
         }
 
         .slide.active {
@@ -52,7 +93,7 @@
             z-index: 1;
         }
 
-        /* Desktop: blurred backdrop fills sides, sharp portrait centered on top */
+        /* Desktop: blurred backdrop fills sides, sharp portrait on top */
         .slide::before {
             content: '';
             position: absolute;
@@ -140,9 +181,31 @@
         .link-button:active {
             transform: scale(0.98);
         }
+
+        /* ============================================
+           VISUALLY HIDDEN — readable by Google,
+           invisible to visitors. Provides H1, H2
+           and text content for SEO scoring.
+        ============================================ */
+        .seo-text {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Hidden SEO text: gives Google an H1, H2 and meaningful text content.
+         Invisible to visitors. Edit to match your actual content/keywords. -->
+    <div class="seo-text">
+        <h1>Jacky Q Soles — Exclusive Content Creator</h1>
+        <h2>Photos &amp; Exclusive Content on Fansly</h2>
+        <p>Welcome to the official page of Jacky Q Soles. Exclusive photos and content available on Fansly. Follow for regular updates and behind-the-scenes access.</p>
+    </div>
 
     <!-- ============================================
          PHOTO ORDER — change the filenames in data-img
@@ -171,14 +234,11 @@
     <script>
         const slides = document.querySelectorAll('.slide');
 
-        // Assign CSS variable to each slide (used by blur + sharp layers)
         slides.forEach(slide => {
             const img = slide.dataset.img;
             if (img) slide.style.setProperty('--img', `url('${img}')`);
         });
 
-        // Confirm images are loaded (preload tags above do the actual fetching)
-        // then kick off the slideshow
         const imageFiles = Array.from(slides).map(s => s.dataset.img).filter(Boolean);
         let loaded = 0;
 
@@ -190,8 +250,7 @@
                 slides[slideIndex].classList.remove('active');
                 slideIndex = (slideIndex + 1) % slides.length;
                 slides[slideIndex].classList.add('active');
-
-                // Change 5000 to adjust speed in milliseconds (3000 = 3s, 8000 = 8s)
+                // Change 5000 to adjust speed in ms (3000 = 3s, 8000 = 8s)
             }, 5000);
         }
 
