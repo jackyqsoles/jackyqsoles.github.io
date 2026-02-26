@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+Disallow: /event/
+Disallow: /link/
+Disallow: /goal/
+Disallow: /site/
+
 Sitemap: https://jackyqsoles.com/sitemap.xml
